@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 namespace SpinMech
 {
-	[UpdateAfter(typeof(PhaseSystem))]
+	[UpdateInGroup(typeof(GameSystemGroup))]
 	public partial struct HealthSystem : ISystem
 	{
 		[BurstCompile]

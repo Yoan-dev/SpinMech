@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config:
-    ArrivalTimer: 5
-    EndTimer: 5
+    ArrivalTimer: 3
+    EndTimer: 3
   BossMechPrefab: {fileID: 4493126514566256834, guid: ff3f08aeb411f2c4f82ce9c8f60892f9, type: 3}

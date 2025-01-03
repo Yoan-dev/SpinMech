@@ -23,8 +23,8 @@ namespace SpinMech
 				});
 				
 				// game
-				AddComponent(entity, new PhaseComponent());
-				AddComponent(entity, new BossCounterComponent());
+				AddComponent(entity, new PhaseComponent { Current = GamePhase.Arrival, Timer = authoring.Config.GetPhaseTimer(GamePhase.Arrival) });
+				AddComponent(entity, new BossCounterComponent { Value = 1 });
 				AddComponent(entity, new ScoreComponent());
 
 				// events

@@ -4,6 +4,7 @@ using Unity.Mathematics;
 
 namespace SpinMech
 {
+	[UpdateInGroup(typeof(GameSystemGroup), OrderFirst = true)]
 	public partial struct PhaseSystem : ISystem
 	{
 		[BurstCompile]
@@ -14,7 +15,7 @@ namespace SpinMech
 			state.RequireForUpdate<PhaseComponent>();
 		}
 
-		[BurstCompile]
+		//[BurstCompile]
 		public void OnUpdate(ref SystemState state)
 		{
 			GameConfig config = SystemAPI.GetSingleton<GameConfig>();
@@ -65,11 +66,13 @@ namespace SpinMech
 				}
 				else if (phase.Current == GamePhase.Scavenge)
 				{
+					Entity bossMech = SystemAPI.GetSingletonEntity<BossTag>();
+
 					// open scavenge UI
-					// TODO
+					// TODO: send modules and loot parameters
+					GameUI.Instance.OpenScavengeUI();
 
 					// destroy boss
-					Entity bossMech = SystemAPI.GetSingletonEntity<BossTag>();
 					state.EntityManager.DestroyEntity(bossMech);
 				}
 			}

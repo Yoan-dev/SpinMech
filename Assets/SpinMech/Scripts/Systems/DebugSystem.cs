@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SpinMech
 {
-	[UpdateAfter(typeof(PhaseSystem))]
+	[UpdateInGroup(typeof(GameSystemGroup))]
 	[UpdateBefore(typeof(HealthSystem))]
 	public partial struct DebugSystem : ISystem
 	{
@@ -15,10 +15,7 @@ namespace SpinMech
 		{
 			//state.Enabled = false;
 
-			state.RequireForUpdate<GameConfig>();
 			state.RequireForUpdate<PhaseComponent>();
-			state.RequireForUpdate<BossCounterComponent>();
-			state.RequireForUpdate<ScoreComponent>();
 			state.RequireForUpdate<DamageEvent>();
 
 			_showDebugUI = true; // temp
@@ -55,24 +52,7 @@ namespace SpinMech
 			if (_showDebugUI)
 			{
 				PhaseComponent phase = SystemAPI.GetSingleton<PhaseComponent>();
-				BossCounterComponent bossCounter = SystemAPI.GetSingleton<BossCounterComponent>();
-				ScoreComponent score = SystemAPI.GetSingleton<ScoreComponent>();
-
-				Entity playerEntity = SystemAPI.GetSingletonEntity<PlayerTag>();
-				HealthComponent playerHealth = SystemAPI.GetComponent<HealthComponent>(playerEntity);
-
-				HealthComponent bossHealth;
-				if (SystemAPI.HasSingleton<BossTag>())
-				{
-					Entity bossEntity = SystemAPI.GetSingletonEntity<BossTag>();
-					bossHealth = SystemAPI.GetComponent<HealthComponent>(bossEntity);
-				}
-				else
-				{
-					bossHealth = new HealthComponent();
-				}
-
-				DebugUI.Instance.UpdateUI(in phase, in bossCounter, in score, in playerHealth, in bossHealth);
+				DebugUI.Instance.UpdateUI(in phase);
 			}
 		}
 

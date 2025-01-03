@@ -3,7 +3,7 @@ using Unity.Entities;
 
 namespace SpinMech
 {
-	[UpdateBefore(typeof(PhaseSystem))]
+	[UpdateAfter(typeof(GameSystemGroup))]
 	public partial struct CleanupSystem : ISystem
 	{
 		[BurstCompile]
@@ -21,8 +21,7 @@ namespace SpinMech
 		}
 	}
 
-	[UpdateAfter(typeof(CleanupSystem))]
-	[UpdateBefore(typeof(PhaseSystem))]
+	[UpdateInGroup(typeof(GameSystemGroup), OrderLast = true)]
 	public partial struct GameOverSystem : ISystem
 	{
 		[BurstCompile]
