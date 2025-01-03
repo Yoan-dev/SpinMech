@@ -5,6 +5,7 @@ using UnityEngine;
 namespace SpinMech
 {
 	[UpdateAfter(typeof(PhaseSystem))]
+	[UpdateBefore(typeof(HealthSystem))]
 	public partial struct DebugSystem : ISystem
 	{
 		private bool _showDebugUI;
@@ -12,8 +13,13 @@ namespace SpinMech
 		[BurstCompile]
 		public void OnCreate(ref SystemState state)
 		{
+			//state.Enabled = false;
+
 			state.RequireForUpdate<GameConfig>();
 			state.RequireForUpdate<PhaseComponent>();
+			state.RequireForUpdate<BossCounterComponent>();
+			state.RequireForUpdate<ScoreComponent>();
+			state.RequireForUpdate<DamageEvent>();
 
 			_showDebugUI = true; // temp
 		}
@@ -29,15 +35,15 @@ namespace SpinMech
 				}
 				else if (Input.GetKeyDown(KeyCode.B)) // damage boss
 				{
-					// TODO
+					AddDamageEvent<BossTag>(SystemAPI.GetSingletonEntity<BossTag>(), 50f);
 				}
 				else if (Input.GetKeyDown(KeyCode.P)) // damage player
 				{
-					// TODO
+					AddDamageEvent<PlayerTag>(SystemAPI.GetSingletonEntity<PlayerTag>(), 50f);
 				}
 				else if (Input.GetKeyDown(KeyCode.H)) // heal player
 				{
-					// TODO
+					AddDamageEvent<PlayerTag>(SystemAPI.GetSingletonEntity<PlayerTag>(), -100f);
 				}
 				else if (Input.GetKeyDown(KeyCode.U)) // hide/show debug UI
 				{
@@ -68,6 +74,15 @@ namespace SpinMech
 
 				DebugUI.Instance.UpdateUI(in phase, in bossCounter, in score, in playerHealth, in bossHealth);
 			}
+		}
+
+		private void AddDamageEvent<T>(Entity entity, float value)
+		{
+			SystemAPI.GetSingletonBuffer<DamageEvent>().Add(new DamageEvent
+			{
+				Value = value,
+				Target = entity,
+			});
 		}
 	}
 }

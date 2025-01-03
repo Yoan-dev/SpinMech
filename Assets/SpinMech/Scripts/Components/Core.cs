@@ -25,6 +25,11 @@ namespace SpinMech
 		}
 	}
 
+	public struct GamePrefabs : IComponentData
+	{
+		public Entity BossMech;
+	}
+
 	public struct PhaseComponent : IComponentData
 	{
 		public float Time;

@@ -10,6 +10,7 @@ namespace SpinMech
 		public void OnCreate(ref SystemState state)
 		{
 			state.RequireForUpdate<GameConfig>();
+			state.RequireForUpdate<GamePrefabs>();
 			state.RequireForUpdate<PhaseComponent>();
 		}
 
@@ -17,6 +18,7 @@ namespace SpinMech
 		public void OnUpdate(ref SystemState state)
 		{
 			GameConfig config = SystemAPI.GetSingleton<GameConfig>();
+			GamePrefabs prefabs = SystemAPI.GetSingleton<GamePrefabs>();
 			ref PhaseComponent phase = ref SystemAPI.GetSingletonRW<PhaseComponent>().ValueRW;
 
 			phase.Time += SystemAPI.Time.DeltaTime;
@@ -24,6 +26,18 @@ namespace SpinMech
 			if (phase.IsTimedPhase() && phase.Time >= phase.Timer)
 			{
 				phase.GoToNext = true;
+			}
+			else if (!phase.GoToNext && phase.Current == GamePhase.Fight)
+			{
+				// check if there are remaining bosses
+				foreach (var destroyed in SystemAPI.Query<EnabledRefRO<DestroyedComponent>>().WithAll<BossTag>())
+				{
+					if (destroyed.ValueRO)
+					{
+						phase.GoToNext = true;
+						break;
+					}
+				}
 			}
 
 			if (phase.GoToNext)
@@ -39,7 +53,25 @@ namespace SpinMech
 					ref BossCounterComponent bossCounter = ref SystemAPI.GetSingletonRW<BossCounterComponent>().ValueRW;
 					bossCounter.Value++;
 				}
-				// else TODO
+				else if (phase.Current == GamePhase.Fight)
+				{
+					// spawn boss
+					// TODO: spawn during Arrival (dropship/else), then activate combat when starting Fight
+					state.EntityManager.Instantiate(prefabs.BossMech);
+				}
+				else if (phase.Current == GamePhase.End)
+				{
+					// TODO
+				}
+				else if (phase.Current == GamePhase.Scavenge)
+				{
+					// open scavenge UI
+					// TODO
+
+					// destroy boss
+					Entity bossMech = SystemAPI.GetSingletonEntity<BossTag>();
+					state.EntityManager.DestroyEntity(bossMech);
+				}
 			}
 		}
 	}

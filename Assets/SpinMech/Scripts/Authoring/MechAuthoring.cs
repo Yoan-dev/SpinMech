@@ -14,6 +14,8 @@ namespace SpinMech
 			{
 				Entity entity = GetEntity(TransformUsageFlags.Dynamic);
 				AddComponent(entity, HealthComponent.New(authoring.Health));
+				AddComponent(entity, new DestroyedComponent());
+				SetComponentEnabled<DestroyedComponent>(entity, false);
 			}
 		}
 	}
