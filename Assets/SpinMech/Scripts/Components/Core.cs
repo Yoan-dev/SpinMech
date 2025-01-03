@@ -1,8 +1,44 @@
+using System;
 using Unity.Entities;
 
 namespace SpinMech
 {
-	public struct LevelComponent : IComponentData
+	public enum GamePhase
+	{
+		None = 0,
+		Arrival,
+		Fight,
+		End,
+		Scavenge,
+		Count = 5,
+	}
+
+	[Serializable]
+	public struct GameConfig : IComponentData
+	{
+		public float ArrivalTimer;
+		public float EndTimer;
+
+		public float GetPhaseTimer(GamePhase phase)
+		{
+			return phase == GamePhase.Arrival ? ArrivalTimer : phase == GamePhase.End ? EndTimer : 0f;
+		}
+	}
+
+	public struct PhaseComponent : IComponentData
+	{
+		public float Time;
+		public float Timer;
+		public GamePhase Current;
+		public bool GoToNext;
+
+		public bool IsTimedPhase()
+		{
+			return Current == GamePhase.End || Current == GamePhase.Arrival;
+		}
+	}
+
+	public struct BossCounterComponent : IComponentData
 	{
 		public int Value;
 	}
